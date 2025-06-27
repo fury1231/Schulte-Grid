@@ -1,0 +1,151 @@
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      box-sizing: border-box;
+      padding: 10px;
+      background-color: #121212;
+      color: #fff;
+    }
+
+    body.light-mode {
+      background-color: #fafafa;
+      color: #000;
+    }
+
+    #info-bar, #credit {
+      align-self: flex-start;
+      margin-left: 40px;
+    }
+
+    #info-bar {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+
+    #credit {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 16px;
+    }
+
+    body.light-mode #credit {
+      color: #666;
+    }
+
+    #current-number {
+      font-size: 20px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #6e4d73;
+    }
+
+    body.light-mode #current-number {
+      color: #007acc;
+    }
+
+    #start-btn, #toggle-theme {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 0 5px 16px 0;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 6px;
+      justify-content: center;
+      align-content: center;
+      display: none;
+      max-width: 720px;
+      width: 100%;
+      padding: 0 10px;
+      box-sizing: border-box;
+    }
+
+    #grid button {
+      aspect-ratio: 1 / 1;
+      font-size: clamp(12px, 2.5vw, 20px);
+      border: 1px solid #888;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: #333;
+      color: #fff;
+      transition: 0.2s ease;
+    }
+
+    body.light-mode #grid button {
+      background-color: white;
+      color: black;
+      border-color: #888;
+    }
+
+    #grid button:hover {
+      background-color: #444;
+      transform: scale(1.03);
+    }
+
+    body.light-mode #grid button:hover {
+      background-color: #f0f0f0;
+    }
+
+    .correct {
+      background-color: #2a2a2a !important;
+      color: black !important;
+      pointer-events: none;
+      text-decoration: line-through;
+    }
+
+    body.light-mode .correct {
+      background-color: lightgreen !important;
+      color: white !important;
+    }
+
+    #restart-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      border: 1px solid #888;
+      display: none;
+      z-index: 10;
+      transition: background-color 0.2s;
+    }
+
+    body.light-mode #restart-btn {
+      background-color: rgba(240, 240, 240, 0.8);
+      color: #000;
+    }
+
+    #restart-btn:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    @media (min-width: 1024px) {
+      #grid {
+        grid-template-columns: repeat(10, 90px);
+      }
+
+      #grid button {
+        width: 90px;
+        height: 90px;
+        font-size: 24px;
+      }
+    }
