@@ -59,11 +59,22 @@
     		btn.classList.add("correct");
     		currentIndex++;
     		if (currentIndex === 100) {
-    			clearInterval(interval);
-    			currentNumberText.textContent = "完成！";
-    			alert(`完成！總用時：${timerText.textContent} 秒`);
+                clearInterval(interval);
+                currentNumberText.textContent = "完成！";
+                const elapsed = parseFloat(timerText.textContent);
+                const rating = getRating(elapsed);
+                alert(`完成！總用時：${elapsed.toFixed(1)} 秒\n評級：${rating}`);
     		} else {
     			currentNumberText.textContent = `目標：${currentIndex.toString().padStart(2, "0")}`;
     		}
     	}
+    }
+
+    function getRating(seconds) {
+        if (seconds < 200) return "大師級（已達專業訓練極限）";
+        if (seconds < 300) return "優秀（掃描技巧成熟）";
+        if (seconds < 400) return "中上（具備穩定視覺搜尋能力）";
+        if (seconds < 500) return "普通（多數人水準）";
+        if (seconds < 700) return "偏弱（可再加強策略與集中力）";
+        return "初階（剛起步，重點是別斷線）";
     }
