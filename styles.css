@@ -3,6 +3,7 @@
     --custom-correct-bg-color: #2a2a2a;
     --custom-correct-text-color: #000000;
     --custom-button-bg-color: #333;
+    --custom-grid-text-color: #fff;
 }
 
 html, body {
@@ -211,7 +212,7 @@ body.light-mode #start-btn:hover {
   border-radius: 6px;
   cursor: pointer;
   background-color: var(--custom-button-bg-color);
-  color: #fff;
+  color: var(--custom-grid-text-color);
   transition: 0.2s ease;
   display: flex;
   justify-content: center;
@@ -221,7 +222,7 @@ body.light-mode #start-btn:hover {
 
 body.light-mode #grid button {
   background-color: white;
-  color: black;
+  color: var(--custom-grid-text-color);
   border-color: #888;
 }
 
