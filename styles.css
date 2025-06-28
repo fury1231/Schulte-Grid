@@ -1,151 +1,333 @@
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: sans-serif;
-      transition: background-color 0.3s, color 0.3s;
-    }
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
 
+body {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: #121212;
+  color: #fff;
+  overflow: hidden;
+  padding: 0;
+}
+
+body.light-mode {
+  background-color: #fafafa;
+  color: #000;
+}
+
+.leaderboard-wrapper {
+    width: 280px;
+    height: 100%;
+    padding: 25px 20px;
+    box-sizing: border-box;
+    background-color: #2a2a2a;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow-y: auto;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+body.light-mode .leaderboard-wrapper {
+  background-color: #fff;
+  color: #000;
+  border-right: 1px solid #ddd;
+}
+
+.leaderboard-wrapper h2 {
+  text-align: left;
+  margin-top: 0;
+  color: #6e4d73;
+  font-size: 22px;
+  margin-bottom: 20px;
+  width: 100%;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #6e4d73;
+}
+
+body.light-mode .leaderboard-wrapper h2 {
+  color: #007acc;
+  border-color: #007acc;
+}
+
+#score-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+#score-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #444;
+  font-size: 15px;
+  word-break: break-word;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+#score-list li span.score-time {
+    color: #ffd700;
+    font-size: 16px;
+}
+
+#score-list li span.score-date {
+    font-size: 12px;
+    color: #bbb;
+    margin-left: 10px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+body.light-mode #score-list li {
+  border-color: #eee;
+}
+
+body.light-mode #score-list li span.score-time {
+    color: #e67e22;
+}
+
+body.light-mode #score-list li span.score-date {
+    color: #888;
+}
+
+#score-list li:last-child {
+  border-bottom: none;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#info-bar, #credit, #current-number {
+  align-self: center;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto 10px auto;
+  font-size: 18px;
+  text-align: center;
+}
+
+#credit {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+body.light-mode #credit {
+  color: #666;
+}
+
+#current-number {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #6e4d73;
+}
+
+body.light-mode #current-number {
+  color: #007acc;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+    width: 100%;
+    max-width: 400px;
+    align-self: center;
+}
+
+#start-btn, #toggle-theme {
+  font-size: 16px;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  border: 1px solid #888;
+  background-color: #333;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+body.light-mode #start-btn, body.light-mode #toggle-theme {
+    background-color: white;
+    color: black;
+    border-color: #888;
+}
+
+#start-btn:hover, #toggle-theme:hover {
+    background-color: #444;
+    transform: translateY(-2px);
+}
+
+body.light-mode #start-btn:hover, body.light-mode #toggle-theme:hover {
+    background-color: #f0f0f0;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+  max-width: 720px;
+  padding: 10px;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+#grid button {
+  aspect-ratio: 1 / 1;
+  font-size: clamp(12px, 2vw, 20px);
+  border: 1px solid #888;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #333;
+  color: #fff;
+  transition: 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
+body.light-mode #grid button {
+  background-color: white;
+  color: black;
+  border-color: #888;
+}
+
+#grid button:hover {
+  background-color: #444;
+  transform: scale(1.03);
+}
+
+body.light-mode #grid button:hover {
+  background-color: #f0f0f0;
+}
+
+.correct {
+  background-color: #2a2a2a !important;
+  color: black !important;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+
+body.light-mode .correct {
+  background-color: rgb(26, 42, 26) !important;
+  color: white !important;
+}
+
+#restart-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  border: 1px solid #888;
+  z-index: 10;
+  transition: background-color 0.2s;
+}
+
+body.light-mode #restart-btn {
+  background-color: rgba(240, 240, 240, 0.8);
+  color: #000;
+}
+
+#restart-btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 767px) {
     body {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      box-sizing: border-box;
-      padding: 10px;
-      background-color: #121212;
-      color: #fff;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        overflow-y: hidden;
+        padding: 5px;
     }
 
-    body.light-mode {
-      background-color: #fafafa;
-      color: #000;
+    .leaderboard-wrapper {
+        display: none;
     }
 
-    #info-bar, #credit {
-      align-self: flex-start;
-      margin-left: 40px;
+    .main-content {
+        width: 100%;
+        height: 100vh;
+        padding: 5px;
+        justify-content: space-evenly;
+        align-items: center;
+        flex-shrink: 0;
     }
 
-    #info-bar {
-      font-size: 20px;
-      margin-bottom: 4px;
+    #info-bar, #credit, #current-number {
+        font-size: 14px;
+        margin: 0 auto 3px auto;
     }
-
     #credit {
-      font-size: 14px;
-      color: #aaa;
-      margin-bottom: 16px;
+        margin-bottom: 8px;
     }
-
-    body.light-mode #credit {
-      color: #666;
-    }
-
     #current-number {
-      font-size: 20px;
-      margin-bottom: 10px;
-      font-weight: bold;
-      color: #6e4d73;
+        font-size: 16px;
+        margin-bottom: 8px;
     }
 
-    body.light-mode #current-number {
-      color: #007acc;
+    .button-container {
+        margin-bottom: 8px;
     }
 
     #start-btn, #toggle-theme {
-      font-size: 18px;
-      padding: 10px 20px;
-      margin: 0 5px 16px 0;
+        font-size: 12px;
+        padding: 6px 8px;
+        margin: 2px;
     }
 
     #grid {
-      display: grid;
-      grid-template-columns: repeat(10, 1fr);
-      gap: 6px;
-      justify-content: center;
-      align-content: center;
-      display: none;
-      max-width: 720px;
-      width: 100%;
-      padding: 0 10px;
-      box-sizing: border-box;
+        grid-template-columns: repeat(10, 1fr);
+        gap: 0.5px;
+        width: calc(100vw - 10px);
+        max-width: none;
+        padding: 0;
+        margin-bottom: 3px;
     }
 
     #grid button {
-      aspect-ratio: 1 / 1;
-      font-size: clamp(12px, 2.5vw, 20px);
-      border: 1px solid #888;
-      border-radius: 8px;
-      cursor: pointer;
-      background-color: #333;
-      color: #fff;
-      transition: 0.2s ease;
-    }
-
-    body.light-mode #grid button {
-      background-color: white;
-      color: black;
-      border-color: #888;
-    }
-
-    #grid button:hover {
-      background-color: #444;
-      transform: scale(1.03);
-    }
-
-    body.light-mode #grid button:hover {
-      background-color: #f0f0f0;
-    }
-
-    .correct {
-      background-color: #2a2a2a !important;
-      color: black !important;
-      pointer-events: none;
-      text-decoration: line-through;
-    }
-
-    body.light-mode .correct {
-      background-color: lightgreen !important;
-      color: white !important;
+        font-size: clamp(6px, 2.2vw, 12px);
+        border-radius: 1px;
+        border: 0.5px solid #666;
     }
 
     #restart-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 16px;
-      font-size: 14px;
-      border: none;
-      border-radius: 6px;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      border: 1px solid #888;
-      display: none;
-      z-index: 10;
-      transition: background-color 0.2s;
+        bottom: 3px;
+        right: 3px;
+        padding: 5px 8px;
+        font-size: 9px;
     }
-
-    body.light-mode #restart-btn {
-      background-color: rgba(240, 240, 240, 0.8);
-      color: #000;
-    }
-
-    #restart-btn:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
-
-    @media (min-width: 1024px) {
-      #grid {
-        grid-template-columns: repeat(10, 90px);
-      }
-
-      #grid button {
-        width: 90px;
-        height: 70px;
-        font-size: 24px;
-      }
-    }
+}
