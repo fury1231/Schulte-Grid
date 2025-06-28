@@ -1,7 +1,6 @@
 const grid = document.getElementById("grid");
 const timerText = document.getElementById("timer");
 const startBtn = document.getElementById("start-btn");
-// const toggleThemeBtn = document.getElementById("toggle-theme");
 const restartBtn = document.getElementById("restart-btn");
 const currentNumberText = document.getElementById("current-number");
 const body = document.body;
@@ -25,6 +24,10 @@ colorOptionsDiv.innerHTML = `
     <div class="color-option-group">
         <label for="correctTextColorPicker">正確按鈕文字顏色:</label>
         <input type="color" id="correctTextColorPicker" value="#000000">
+    </div>
+    <div class="color-option-group">
+        <label for="buttonBgColorPicker">方框背景顏色:</label>
+        <input type="color" id="buttonBgColorPicker" value="#333">
     </div>
 `;
 leaderboardWrapper.appendChild(colorOptionsDiv);
@@ -54,19 +57,17 @@ const savedTheme = localStorage.getItem("theme");
 if (savedTheme === "light") {
 	body.classList.add("light-mode");
 }
-// toggleThemeBtn.addEventListener("click", () => {
-// 	body.classList.toggle("light-mode");
-// 	localStorage.setItem("theme", body.classList.contains("light-mode") ? "light" : "dark");
-// });
 
 const bgColorPicker = document.getElementById("bgColorPicker");
 const correctBgColorPicker = document.getElementById("correctBgColorPicker");
 const correctTextColorPicker = document.getElementById("correctTextColorPicker");
+const buttonBgColorPicker = document.getElementById("buttonBgColorPicker");
 
 function applyCustomColors() {
     const savedBgColor = localStorage.getItem("customBgColor");
     const savedCorrectBgColor = localStorage.getItem("customCorrectBgColor");
     const savedCorrectTextColor = localStorage.getItem("customCorrectTextColor");
+    const savedButtonBgColor = localStorage.getItem("customButtonBgColor");
 
     if (savedBgColor) {
         document.documentElement.style.setProperty("--custom-bg-color", savedBgColor);
@@ -79,6 +80,10 @@ function applyCustomColors() {
     if (savedCorrectTextColor) {
         document.documentElement.style.setProperty("--custom-correct-text-color", savedCorrectTextColor);
         correctTextColorPicker.value = savedCorrectTextColor;
+    }
+    if (savedButtonBgColor) {
+        document.documentElement.style.setProperty("--custom-button-bg-color", savedButtonBgColor);
+        buttonBgColorPicker.value = savedButtonBgColor;
     }
 }
 
@@ -97,10 +102,14 @@ correctTextColorPicker.addEventListener("input", (e) => {
     localStorage.setItem("customCorrectTextColor", e.target.value);
 });
 
+buttonBgColorPicker.addEventListener("input", (e) => {
+    document.documentElement.style.setProperty("--custom-button-bg-color", e.target.value);
+    localStorage.setItem("customButtonBgColor", e.target.value);
+});
+
 startBtn.addEventListener("click", () => {
 	startBtn.disabled = true;
 	startBtn.style.display = "none";
-	// toggleThemeBtn.style.display = "none";
 	grid.style.display = "grid";
 	restartBtn.style.display = "block";
 	initGame();
@@ -149,7 +158,6 @@ function handleClick(btn, num) {
 
             startBtn.style.display = "block";
             startBtn.disabled = false;
-            // toggleThemeBtn.style.display = "block";
             restartBtn.style.display = "none";
 		} else {
 			currentNumberText.textContent = `目標：${currentIndex.toString().padStart(2, "0")}`;

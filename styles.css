@@ -2,6 +2,7 @@
     --custom-bg-color: #121212;
     --custom-correct-bg-color: #2a2a2a;
     --custom-correct-text-color: #000000;
+    --custom-button-bg-color: #333;
 }
 
 html, body {
@@ -163,7 +164,7 @@ body.light-mode #current-number {
     align-self: center;
 }
 
-#start-btn, #toggle-theme {
+#start-btn {
   font-size: 16px;
   padding: 10px 15px;
   margin: 5px;
@@ -175,18 +176,18 @@ body.light-mode #current-number {
   transition: background-color 0.2s, transform 0.2s;
 }
 
-body.light-mode #start-btn, body.light-mode #toggle-theme {
+body.light-mode #start-btn {
     background-color: white;
     color: black;
     border-color: #888;
 }
 
-#start-btn:hover, #toggle-theme:hover {
+#start-btn:hover {
     background-color: #444;
     transform: translateY(-2px);
 }
 
-body.light-mode #start-btn:hover, body.light-mode #toggle-theme:hover {
+body.light-mode #start-btn:hover {
     background-color: #f0f0f0;
 }
 
@@ -209,7 +210,7 @@ body.light-mode #start-btn:hover, body.light-mode #toggle-theme:hover {
   border: 1px solid #888;
   border-radius: 6px;
   cursor: pointer;
-  background-color: #333;
+  background-color: var(--custom-button-bg-color);
   color: #fff;
   transition: 0.2s ease;
   display: flex;
@@ -345,7 +346,7 @@ body.light-mode .color-option-group label {
         margin-bottom: 8px;
     }
 
-    #start-btn, #toggle-theme {
+    #start-btn {
         font-size: 12px;
         padding: 6px 8px;
         margin: 2px;
