@@ -32,6 +32,17 @@ colorOptionsDiv.innerHTML = `
 `;
 leaderboardWrapper.appendChild(colorOptionsDiv);
 
+const footerCreditDiv = document.createElement("div");
+footerCreditDiv.textContent = "Developed by Yan © 2025.";
+footerCreditDiv.style.marginTop = "auto";
+footerCreditDiv.style.textAlign = "center";
+footerCreditDiv.style.paddingTop = "20px";
+footerCreditDiv.style.borderTop = "1px solid #444"; 
+footerCreditDiv.style.color = "#aaa"; 
+footerCreditDiv.style.fontSize = "12px";
+leaderboardWrapper.appendChild(footerCreditDiv);
+
+
 const mainContentDiv = document.createElement("div");
 mainContentDiv.className = "main-content";
 
