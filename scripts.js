@@ -1,7 +1,7 @@
 const grid = document.getElementById("grid");
 const timerText = document.getElementById("timer");
 const startBtn = document.getElementById("start-btn");
-const toggleThemeBtn = document.getElementById("toggle-theme");
+// const toggleThemeBtn = document.getElementById("toggle-theme");
 const restartBtn = document.getElementById("restart-btn");
 const currentNumberText = document.getElementById("current-number");
 const body = document.body;
@@ -10,6 +10,24 @@ const creditDiv = document.getElementById("credit");
 const leaderboardWrapper = document.createElement("div");
 leaderboardWrapper.className = "leaderboard-wrapper";
 leaderboardWrapper.innerHTML = "<h2>本地排行榜</h2><ol id='score-list'></ol>";
+
+const colorOptionsDiv = document.createElement("div");
+colorOptionsDiv.className = "color-options";
+colorOptionsDiv.innerHTML = `
+    <div class="color-option-group">
+        <label for="bgColorPicker">背景顏色:</label>
+        <input type="color" id="bgColorPicker" value="#121212">
+    </div>
+    <div class="color-option-group">
+        <label for="correctBgColorPicker">正確按鈕背景顏色:</label>
+        <input type="color" id="correctBgColorPicker" value="#2a2a2a">
+    </div>
+    <div class="color-option-group">
+        <label for="correctTextColorPicker">正確按鈕文字顏色:</label>
+        <input type="color" id="correctTextColorPicker" value="#000000">
+    </div>
+`;
+leaderboardWrapper.appendChild(colorOptionsDiv);
 
 const mainContentDiv = document.createElement("div");
 mainContentDiv.className = "main-content";
@@ -36,15 +54,53 @@ const savedTheme = localStorage.getItem("theme");
 if (savedTheme === "light") {
 	body.classList.add("light-mode");
 }
-toggleThemeBtn.addEventListener("click", () => {
-	body.classList.toggle("light-mode");
-	localStorage.setItem("theme", body.classList.contains("light-mode") ? "light" : "dark");
+// toggleThemeBtn.addEventListener("click", () => {
+// 	body.classList.toggle("light-mode");
+// 	localStorage.setItem("theme", body.classList.contains("light-mode") ? "light" : "dark");
+// });
+
+const bgColorPicker = document.getElementById("bgColorPicker");
+const correctBgColorPicker = document.getElementById("correctBgColorPicker");
+const correctTextColorPicker = document.getElementById("correctTextColorPicker");
+
+function applyCustomColors() {
+    const savedBgColor = localStorage.getItem("customBgColor");
+    const savedCorrectBgColor = localStorage.getItem("customCorrectBgColor");
+    const savedCorrectTextColor = localStorage.getItem("customCorrectTextColor");
+
+    if (savedBgColor) {
+        document.documentElement.style.setProperty("--custom-bg-color", savedBgColor);
+        bgColorPicker.value = savedBgColor;
+    }
+    if (savedCorrectBgColor) {
+        document.documentElement.style.setProperty("--custom-correct-bg-color", savedCorrectBgColor);
+        correctBgColorPicker.value = savedCorrectBgColor;
+    }
+    if (savedCorrectTextColor) {
+        document.documentElement.style.setProperty("--custom-correct-text-color", savedCorrectTextColor);
+        correctTextColorPicker.value = savedCorrectTextColor;
+    }
+}
+
+bgColorPicker.addEventListener("input", (e) => {
+    document.documentElement.style.setProperty("--custom-bg-color", e.target.value);
+    localStorage.setItem("customBgColor", e.target.value);
+});
+
+correctBgColorPicker.addEventListener("input", (e) => {
+    document.documentElement.style.setProperty("--custom-correct-bg-color", e.target.value);
+    localStorage.setItem("customCorrectBgColor", e.target.value);
+});
+
+correctTextColorPicker.addEventListener("input", (e) => {
+    document.documentElement.style.setProperty("--custom-correct-text-color", e.target.value);
+    localStorage.setItem("customCorrectTextColor", e.target.value);
 });
 
 startBtn.addEventListener("click", () => {
 	startBtn.disabled = true;
 	startBtn.style.display = "none";
-	toggleThemeBtn.style.display = "none";
+	// toggleThemeBtn.style.display = "none";
 	grid.style.display = "grid";
 	restartBtn.style.display = "block";
 	initGame();
@@ -93,7 +149,7 @@ function handleClick(btn, num) {
 
             startBtn.style.display = "block";
             startBtn.disabled = false;
-            toggleThemeBtn.style.display = "block";
+            // toggleThemeBtn.style.display = "block";
             restartBtn.style.display = "none";
 		} else {
 			currentNumberText.textContent = `目標：${currentIndex.toString().padStart(2, "0")}`;
@@ -162,5 +218,5 @@ function updateLeaderboard() {
 
 document.addEventListener("DOMContentLoaded", () => {
     updateLeaderboard();
+    applyCustomColors();
 });
-
