@@ -4,6 +4,7 @@
     --custom-correct-text-color: #000000;
     --custom-button-bg-color: #333;
     --custom-grid-text-color: #fff;
+    --custom-button-hover-color: #444;
 }
 
 html, body {
@@ -227,7 +228,7 @@ body.light-mode #grid button {
 }
 
 #grid button:hover {
-  background-color: #444;
+  background-color:  var(--custom-button-hover-color); 
   transform: scale(1.03);
 }
 

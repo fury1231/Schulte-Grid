@@ -33,6 +33,10 @@ colorOptionsDiv.innerHTML = `
         <label for="gridTextColorPicker">網格文字顏色:</label>
         <input type="color" id="gridTextColorPicker" value="#ffffff"> 
     </div>
+        <div class="color-option-group">
+        <label for="buttonHoverColorPicker">方框懸停顏色:</label> 
+        <input type="color" id="buttonHoverColorPicker" value="#444">
+    </div>
 `;
 leaderboardWrapper.appendChild(colorOptionsDiv);
 
@@ -78,13 +82,15 @@ const correctBgColorPicker = document.getElementById("correctBgColorPicker");
 const correctTextColorPicker = document.getElementById("correctTextColorPicker");
 const buttonBgColorPicker = document.getElementById("buttonBgColorPicker");
 const gridTextColorPicker = document.getElementById("gridTextColorPicker");
+const buttonHoverColorPicker = document.getElementById("buttonHoverColorPicker"); 
 
 function applyCustomColors() {
     const savedBgColor = localStorage.getItem("customBgColor");
     const savedCorrectBgColor = localStorage.getItem("customCorrectBgColor");
     const savedCorrectTextColor = localStorage.getItem("customCorrectTextColor");
     const savedButtonBgColor = localStorage.getItem("customButtonBgColor");
-    const savedGridTextColor = localStorage.getItem("customGridTextColor"); // 新增這一行
+    const savedGridTextColor = localStorage.getItem("customGridTextColor");
+    const savedButtonHoverColor = localStorage.getItem("customButtonHoverColor"); // 新增這一行
 
     if (savedBgColor) {
         document.documentElement.style.setProperty("--custom-bg-color", savedBgColor);
@@ -102,9 +108,13 @@ function applyCustomColors() {
         document.documentElement.style.setProperty("--custom-button-bg-color", savedButtonBgColor);
         buttonBgColorPicker.value = savedButtonBgColor;
     }
-    if (savedGridTextColor) { 
+    if (savedGridTextColor) {
         document.documentElement.style.setProperty("--custom-grid-text-color", savedGridTextColor);
         gridTextColorPicker.value = savedGridTextColor;
+    }
+    if (savedButtonHoverColor) { 
+        document.documentElement.style.setProperty("--custom-button-hover-color", savedButtonHoverColor);
+        buttonHoverColorPicker.value = savedButtonHoverColor;
     }
 }
 
@@ -131,6 +141,11 @@ buttonBgColorPicker.addEventListener("input", (e) => {
 gridTextColorPicker.addEventListener("input", (e) => { 
     document.documentElement.style.setProperty("--custom-grid-text-color", e.target.value);
     localStorage.setItem("customGridTextColor", e.target.value);
+});
+
+buttonHoverColorPicker.addEventListener("input", (e) => { 
+    document.documentElement.style.setProperty("--custom-button-hover-color", e.target.value);
+    localStorage.setItem("customButtonHoverColor", e.target.value);
 });
 
 startBtn.addEventListener("click", () => {
