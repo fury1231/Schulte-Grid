@@ -72,9 +72,8 @@ body.appendChild(leaderboardWrapper);
 body.appendChild(mainContentDiv);
 body.appendChild(restartBtn);
 
-let numbers = Array.from({
-	length: 100
-}, (_, i) => i.toString().padStart(2, "0"));
+let finishedNumbers = [];
+let numbers = [];
 let currentIndex = 0;
 let startTime;
 let interval;
@@ -217,66 +216,70 @@ restartBtn.addEventListener("click", () => {
 });
 
 function initGame() {
-	// 根據網格大小生成數字
-	numbers = Array.from({ length: maxNumber }, (_, i) => {
-		return i.toString().padStart(2, "0"); // 所有網格都從00開始
-	}).sort(() => Math.random() - 0.5);
-	
+	finishedNumbers = [];
+	numbers = Array.from({ length: maxNumber }, (_, i) => i.toString().padStart(2, "0")).sort(() => Math.random() - 0.5);
 	currentIndex = 0;
-	// 顯示地獄模式狀態
 	const modeText = isHellMode ? "（地獄模式）" : "";
 	currentNumberText.textContent = `目標：${getCurrentTarget()}${modeText}`;
 	grid.innerHTML = "";
-	
-	// 設定網格CSS
 	grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
-	
-	for (let num of numbers) {
-		const cellBtn = document.createElement("button");
-		cellBtn.textContent = num;
-		cellBtn.addEventListener("click", () => handleClick(cellBtn, num));
-		grid.appendChild(cellBtn);
-	}
+	renderGrid();
 	startTime = Date.now();
 	interval = setInterval(() => {
 		const elapsed = (Date.now() - startTime) / 1000;
 		timerText.textContent = elapsed.toFixed(1);
 	}, 100);
-	
-	// 地獄模式：10秒倒計時
 	if (isHellMode) {
 		startShuffleTimer();
+	}
+}
+
+function renderGrid() {
+	grid.innerHTML = "";
+	// 先渲染已完成的
+	for (let i = 0; i < finishedNumbers.length; i++) {
+		const cellBtn = document.createElement("button");
+		cellBtn.textContent = finishedNumbers[i];
+		cellBtn.classList.add("correct");
+		grid.appendChild(cellBtn);
+	}
+	// 再渲染未完成的
+	for (let i = 0; i < numbers.length; i++) {
+		const cellBtn = document.createElement("button");
+		cellBtn.textContent = numbers[i];
+		cellBtn.addEventListener("click", () => handleClick(cellBtn, numbers[i]));
+		grid.appendChild(cellBtn);
 	}
 }
 
 function handleClick(btn, num) {
 	const expected = getCurrentTarget();
 	if (num === expected) {
-		btn.classList.add("correct");
+		finishedNumbers.push(num);
+		numbers = numbers.filter(n => n !== num);
 		currentIndex++;
-		
-		// 地獄模式：點擊後重新打亂
-		if (isHellMode && currentIndex < maxNumber) {
+		btn.classList.add("correct");
+		if (isHellMode && numbers.length > 0) {
 			clearTimeout(shuffleTimeout);
 			shuffleGrid();
 			startShuffleTimer();
+		} else {
+			renderGrid();
 		}
-		
-		if (currentIndex === maxNumber) {
-            clearInterval(interval);
-            clearTimeout(shuffleTimeout);
-            currentNumberText.textContent = "完成！";
-            const elapsed = parseFloat(timerText.textContent);
-            const rating = getRating(elapsed);
-            const modeText = isHellMode ? "（地獄模式）" : "";
-            alert(`完成！總用時：${elapsed.toFixed(1)} 秒${modeText}\n評級：${rating}`);
-            saveScore(elapsed);
-            updateLeaderboard();
-            leaderboardWrapper.style.display = "block";
-
-            startBtn.style.display = "block";
-            startBtn.disabled = false;
-            restartBtn.style.display = "none";
+		if (finishedNumbers.length === maxNumber) {
+			clearInterval(interval);
+			clearTimeout(shuffleTimeout);
+			currentNumberText.textContent = "完成！";
+			const elapsed = parseFloat(timerText.textContent);
+			const rating = getRating(elapsed);
+			const modeText = isHellMode ? "（地獄模式）" : "";
+			alert(`完成！總用時：${elapsed.toFixed(1)} 秒${modeText}\n評級：${rating}`);
+			saveScore(elapsed);
+			updateLeaderboard();
+			leaderboardWrapper.style.display = "block";
+			startBtn.style.display = "block";
+			startBtn.disabled = false;
+			restartBtn.style.display = "none";
 		} else {
 			const modeText = isHellMode ? "（地獄模式）" : "";
 			currentNumberText.textContent = `目標：${getCurrentTarget()}${modeText}`;
@@ -285,31 +288,41 @@ function handleClick(btn, num) {
 }
 
 function getRating(seconds) {
-    if (seconds < 200) return "大師級（已達專業訓練極限）";
-    if (seconds < 300) return "優秀（掃描技巧成熟）";
-    if (seconds < 400) return "中上（具備穩定視覺搜尋能力）";
-    if (seconds < 500) return "普通（多數人水準）";
-    if (seconds < 700) return "偏弱（可再加強策略與集中力）";
-    return "初階（剛起步，重點是別斷線）";
+    if (maxNumber === 100) { // 10x10
+        if (seconds < 200) return "大師級（已達專業訓練極限）";
+        if (seconds < 300) return "優秀（掃描技巧成熟）";
+        if (seconds < 400) return "中上（具備穩定視覺搜尋能力）";
+        if (seconds < 500) return "普通（多數人水準）";
+        if (seconds < 700) return "偏弱（可再加強策略與集中力）";
+        return "初階（剛起步，重點是別斷線）";
+    } else if (maxNumber === 49) { // 7x7
+        if (seconds < 100) return "大師級（已達專業訓練極限）";
+        if (seconds < 150) return "優秀（掃描技巧成熟）";
+        if (seconds < 200) return "中上（具備穩定視覺搜尋能力）";
+        if (seconds < 250) return "普通（多數人水準）";
+        if (seconds < 350) return "偏弱（可再加強策略與集中力）";
+        return "初階（剛起步，重點是別斷線）";
+    } else if (maxNumber === 25) { // 5x5
+        if (seconds < 30) return "大師級（已達專業訓練極限）";
+        if (seconds < 50) return "優秀（掃描技巧成熟）";
+        if (seconds < 70) return "中上（具備穩定視覺搜尋能力）";
+        if (seconds < 90) return "普通（多數人水準）";
+        if (seconds < 120) return "偏弱（可再加強策略與集中力）";
+        return "初階（剛起步，重點是別斷線）";
+    } else {
+        // 其他尺寸預設用10x10標準
+        if (seconds < 200) return "大師級（已達專業訓練極限）";
+        if (seconds < 300) return "優秀（掃描技巧成熟）";
+        if (seconds < 400) return "中上（具備穩定視覺搜尋能力）";
+        if (seconds < 500) return "普通（多數人水準）";
+        if (seconds < 700) return "偏弱（可再加強策略與集中力）";
+        return "初階（剛起步，重點是別斷線）";
+    }
 }
 
 function shuffleGrid() {
-	// 重新打亂數字（除了已完成的）
-	const remainingNumbers = numbers.slice(currentIndex);
-	const shuffledRemaining = remainingNumbers.sort(() => Math.random() - 0.5);
-	
-	// 更新numbers陣列
-	for (let i = currentIndex; i < maxNumber; i++) {
-		numbers[i] = shuffledRemaining[i - currentIndex];
-	}
-	
-	// 重新渲染網格（保持已完成的按鈕狀態）
-	const gridButtons = grid.querySelectorAll("button");
-	for (let i = 0; i < gridButtons.length; i++) {
-		if (i >= currentIndex) {
-			gridButtons[i].textContent = numbers[i];
-		}
-	}
+	numbers = numbers.sort(() => Math.random() - 0.5);
+	renderGrid();
 }
 
 function startShuffleTimer() {
