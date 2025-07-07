@@ -356,22 +356,38 @@ function setCookie(name, value, days) {
     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
 }
 
+function getScoreKey() {
+    if (maxNumber === 25) return "schulteScores_25";
+    if (maxNumber === 49) return "schulteScores_49";
+    return "schulteScores_100";
+}
+
 function saveScore(score) {
-    let scores = getCookie("schulteScores");
+    let key = getScoreKey();
+    let scores = getCookie(key);
     scores = scores ? JSON.parse(scores) : [];
     scores.push({ time: score.toFixed(1), date: new Date().toLocaleString() });
     scores.sort((a, b) => parseFloat(a.time) - parseFloat(b.time));
     if (scores.length > MAX_SCORES) {
         scores = scores.slice(0, MAX_SCORES);
     }
-    setCookie("schulteScores", JSON.stringify(scores), 365);
+    setCookie(key, JSON.stringify(scores), 365);
 }
 
 function updateLeaderboard() {
     const scoreList = document.getElementById("score-list");
     scoreList.innerHTML = "";
-    let scores = getCookie("schulteScores");
+    let key = getScoreKey();
+    let scores = getCookie(key);
     scores = scores ? JSON.parse(scores) : [];
+
+    // 動態顯示排行榜標題
+    const leaderboardTitle = document.querySelector(".sidebar-header h2");
+    if (leaderboardTitle) {
+        if (maxNumber === 25) leaderboardTitle.textContent = "本地排行榜（5x5）";
+        else if (maxNumber === 49) leaderboardTitle.textContent = "本地排行榜（7x7）";
+        else leaderboardTitle.textContent = "本地排行榜（10x10）";
+    }
 
     if (scores.length === 0) {
         scoreList.innerHTML = "<li>目前沒有任何紀錄。</li>";
@@ -403,6 +419,8 @@ gridSizeSelect.addEventListener("change", (e) => {
 		currentIndex = 0;
 		initGame();
 	}
+	// 即時更新排行榜標題和內容
+	updateLeaderboard();
 });
 
 function getCurrentTarget() {
