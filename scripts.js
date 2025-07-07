@@ -3,12 +3,19 @@ const timerText = document.getElementById("timer");
 const startBtn = document.getElementById("start-btn");
 const restartBtn = document.getElementById("restart-btn");
 const currentNumberText = document.getElementById("current-number");
+const gridSizeSelect = document.getElementById("grid-size");
 const body = document.body;
 const creditDiv = document.getElementById("credit");
 
 const leaderboardWrapper = document.createElement("div");
 leaderboardWrapper.className = "leaderboard-wrapper";
-leaderboardWrapper.innerHTML = "<h2>本地排行榜</h2><ol id='score-list'></ol>";
+leaderboardWrapper.innerHTML = `
+	<div class="sidebar-header">
+		<h2>本地排行榜</h2>
+		<button id="toggle-sidebar" class="toggle-sidebar-btn">◀</button>
+	</div>
+	<ol id='score-list'></ol>
+`;
 
 const colorOptionsDiv = document.createElement("div");
 colorOptionsDiv.className = "color-options";
@@ -41,6 +48,7 @@ colorOptionsDiv.innerHTML = `
 leaderboardWrapper.appendChild(colorOptionsDiv);
 
 const footerCreditDiv = document.createElement("div");
+footerCreditDiv.className = "footer-credit";
 footerCreditDiv.textContent = "Developed by Yan © 2025.";
 footerCreditDiv.style.marginTop = "auto";
 footerCreditDiv.style.textAlign = "center";
@@ -70,6 +78,10 @@ let numbers = Array.from({
 let currentIndex = 0;
 let startTime;
 let interval;
+let isHellMode = false;
+let shuffleTimeout;
+let gridSize = 10;
+let maxNumber = 100;
 const MAX_SCORES = 5;
 
 const savedTheme = localStorage.getItem("theme");
@@ -83,6 +95,41 @@ const correctTextColorPicker = document.getElementById("correctTextColorPicker")
 const buttonBgColorPicker = document.getElementById("buttonBgColorPicker");
 const gridTextColorPicker = document.getElementById("gridTextColorPicker");
 const buttonHoverColorPicker = document.getElementById("buttonHoverColorPicker"); 
+
+// ====== 修正側邊欄收縮按鈕事件綁定 ======
+let isSidebarCollapsed = false;
+
+// 使用事件委派，在leaderboardWrapper上監聽點擊事件
+leaderboardWrapper.addEventListener("click", (e) => {
+	if (e.target.id === "toggle-sidebar" || e.target.classList.contains("toggle-sidebar-btn")) {
+		console.log("Toggle button clicked via event delegation!"); // 除錯資訊
+		isSidebarCollapsed = !isSidebarCollapsed;
+		leaderboardWrapper.classList.toggle("collapsed", isSidebarCollapsed);
+		
+		// 更新按鈕文字
+		const toggleBtn = e.target;
+		toggleBtn.textContent = isSidebarCollapsed ? "▶" : "◀";
+		localStorage.setItem("sidebarCollapsed", isSidebarCollapsed);
+	}
+});
+
+function setupSidebarToggle() {
+	const toggleSidebarBtn = document.getElementById("toggle-sidebar");
+	console.log("Toggle button found:", toggleSidebarBtn); // 除錯資訊
+	
+	if (toggleSidebarBtn) {
+		// 恢復側邊欄狀態
+		const savedSidebarState = localStorage.getItem("sidebarCollapsed");
+		if (savedSidebarState === "true") {
+			isSidebarCollapsed = true;
+			leaderboardWrapper.classList.add("collapsed");
+			toggleSidebarBtn.textContent = "▶";
+		}
+	} else {
+		console.error("Toggle sidebar button not found!"); // 除錯資訊
+	}
+}
+setupSidebarToggle();
 
 function applyCustomColors() {
     const savedBgColor = localStorage.getItem("customBgColor");
@@ -149,15 +196,20 @@ buttonHoverColorPicker.addEventListener("input", (e) => {
 });
 
 startBtn.addEventListener("click", () => {
+	// 詢問是否要開啟地獄模式
+	const useHellMode = confirm("是否要開啟地獄模式？\n\n地獄模式特點：\n• 每次點擊後數字會重新打亂\n• 10秒內沒點擊會自動打亂\n• 更具挑戰性");
+	
 	startBtn.disabled = true;
 	startBtn.style.display = "none";
 	grid.style.display = "grid";
 	restartBtn.style.display = "block";
+	isHellMode = useHellMode;
 	initGame();
 });
 
 restartBtn.addEventListener("click", () => {
 	clearInterval(interval);
+	clearTimeout(shuffleTimeout);
 	timerText.textContent = "0.0";
 	grid.innerHTML = "";
 	currentIndex = 0;
@@ -165,10 +217,20 @@ restartBtn.addEventListener("click", () => {
 });
 
 function initGame() {
-	numbers = Array.from({ length: 100 }, (_, i) => i.toString().padStart(2, "0")).sort(() => Math.random() - 0.5);
+	// 根據網格大小生成數字
+	numbers = Array.from({ length: maxNumber }, (_, i) => {
+		return i.toString().padStart(2, "0"); // 所有網格都從00開始
+	}).sort(() => Math.random() - 0.5);
+	
 	currentIndex = 0;
-	currentNumberText.textContent = `目標：${currentIndex.toString().padStart(2, "0")}`;
+	// 顯示地獄模式狀態
+	const modeText = isHellMode ? "（地獄模式）" : "";
+	currentNumberText.textContent = `目標：${getCurrentTarget()}${modeText}`;
 	grid.innerHTML = "";
+	
+	// 設定網格CSS
+	grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+	
 	for (let num of numbers) {
 		const cellBtn = document.createElement("button");
 		cellBtn.textContent = num;
@@ -180,19 +242,34 @@ function initGame() {
 		const elapsed = (Date.now() - startTime) / 1000;
 		timerText.textContent = elapsed.toFixed(1);
 	}, 100);
+	
+	// 地獄模式：10秒倒計時
+	if (isHellMode) {
+		startShuffleTimer();
+	}
 }
 
 function handleClick(btn, num) {
-	const expected = currentIndex.toString().padStart(2, "0");
+	const expected = getCurrentTarget();
 	if (num === expected) {
 		btn.classList.add("correct");
 		currentIndex++;
-		if (currentIndex === 100) {
+		
+		// 地獄模式：點擊後重新打亂
+		if (isHellMode && currentIndex < maxNumber) {
+			clearTimeout(shuffleTimeout);
+			shuffleGrid();
+			startShuffleTimer();
+		}
+		
+		if (currentIndex === maxNumber) {
             clearInterval(interval);
+            clearTimeout(shuffleTimeout);
             currentNumberText.textContent = "完成！";
             const elapsed = parseFloat(timerText.textContent);
             const rating = getRating(elapsed);
-            alert(`完成！總用時：${elapsed.toFixed(1)} 秒\n評級：${rating}`);
+            const modeText = isHellMode ? "（地獄模式）" : "";
+            alert(`完成！總用時：${elapsed.toFixed(1)} 秒${modeText}\n評級：${rating}`);
             saveScore(elapsed);
             updateLeaderboard();
             leaderboardWrapper.style.display = "block";
@@ -201,7 +278,8 @@ function handleClick(btn, num) {
             startBtn.disabled = false;
             restartBtn.style.display = "none";
 		} else {
-			currentNumberText.textContent = `目標：${currentIndex.toString().padStart(2, "0")}`;
+			const modeText = isHellMode ? "（地獄模式）" : "";
+			currentNumberText.textContent = `目標：${getCurrentTarget()}${modeText}`;
 		}
 	}
 }
@@ -213,6 +291,35 @@ function getRating(seconds) {
     if (seconds < 500) return "普通（多數人水準）";
     if (seconds < 700) return "偏弱（可再加強策略與集中力）";
     return "初階（剛起步，重點是別斷線）";
+}
+
+function shuffleGrid() {
+	// 重新打亂數字（除了已完成的）
+	const remainingNumbers = numbers.slice(currentIndex);
+	const shuffledRemaining = remainingNumbers.sort(() => Math.random() - 0.5);
+	
+	// 更新numbers陣列
+	for (let i = currentIndex; i < maxNumber; i++) {
+		numbers[i] = shuffledRemaining[i - currentIndex];
+	}
+	
+	// 重新渲染網格（保持已完成的按鈕狀態）
+	const gridButtons = grid.querySelectorAll("button");
+	for (let i = 0; i < gridButtons.length; i++) {
+		if (i >= currentIndex) {
+			gridButtons[i].textContent = numbers[i];
+		}
+	}
+}
+
+function startShuffleTimer() {
+	clearTimeout(shuffleTimeout);
+	shuffleTimeout = setTimeout(() => {
+		if (isHellMode && currentIndex < maxNumber) {
+			shuffleGrid();
+			startShuffleTimer(); // 重新開始10秒倒計時
+		}
+	}, 10000); // 10秒
 }
 
 function getCookie(name) {
@@ -269,3 +376,22 @@ document.addEventListener("DOMContentLoaded", () => {
     updateLeaderboard();
     applyCustomColors();
 });
+
+gridSizeSelect.addEventListener("change", (e) => {
+	gridSize = parseInt(e.target.value);
+	maxNumber = gridSize * gridSize;
+	
+	// 如果遊戲正在進行，重新開始但保持地獄模式狀態
+	if (startTime) {
+		clearInterval(interval);
+		clearTimeout(shuffleTimeout);
+		timerText.textContent = "0.0";
+		grid.innerHTML = "";
+		currentIndex = 0;
+		initGame();
+	}
+});
+
+function getCurrentTarget() {
+	return currentIndex.toString().padStart(2, "0"); // 所有網格都從00開始
+}

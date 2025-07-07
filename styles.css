@@ -45,6 +45,12 @@ body.light-mode {
     align-items: flex-start;
     overflow-y: auto;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
+    transition: width 0.3s ease;
+}
+
+.leaderboard-wrapper.collapsed {
+    width: 60px;
+    padding: 15px 10px;
 }
 
 body.light-mode .leaderboard-wrapper {
@@ -58,15 +64,12 @@ body.light-mode .leaderboard-wrapper {
   margin-top: 0;
   color: #6e4d73;
   font-size: 22px;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   width: 100%;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #6e4d73;
 }
 
 body.light-mode .leaderboard-wrapper h2 {
   color: #007acc;
-  border-color: #007acc;
 }
 
 #score-list {
@@ -166,10 +169,81 @@ body.light-mode #current-number {
     align-self: center;
 }
 
+.grid-size-selector {
+    display: flex;
+    align-items: center;
+    margin: 5px;
+    padding: 8px 12px;
+    background-color: #333;
+    border-radius: 8px;
+    border: 1px solid #888;
+}
+
+.grid-size-selector label {
+    color: #fff;
+    margin-right: 8px;
+    font-size: 14px;
+}
+
+.grid-size-selector select {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #666;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+body.light-mode .grid-size-selector {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
+body.light-mode .grid-size-selector label {
+    color: #333;
+}
+
+body.light-mode .grid-size-selector select {
+    background-color: #fff;
+    color: #333;
+    border-color: #ccc;
+}
+
+body.light-mode .grid-size-selector {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
+body.light-mode .grid-size-selector label {
+    color: #333;
+}
+
+body.light-mode .grid-size-selector select {
+    background-color: #fff;
+    color: #333;
+    border-color: #ccc;
+}
+
+body.light-mode .grid-size-selector {
+    background-color: #f0f0f0;
+    border-color: #ddd;
+}
+
+body.light-mode .grid-size-selector label {
+    color: #333;
+}
+
+body.light-mode .grid-size-selector select {
+    background-color: #fff;
+    color: #333;
+    border-color: #ccc;
+}
+
 #start-btn {
-  font-size: 16px;
-  padding: 10px 15px;
-  margin: 5px;
+  font-size: 14px;
+  padding: 8px 12px;
+  margin: 3px;
   border-radius: 8px;
   border: 1px solid #888;
   background-color: #333;
@@ -207,18 +281,20 @@ body.light-mode #start-btn:hover {
 }
 
 #grid button {
-  aspect-ratio: 1 / 1;
-  font-size: clamp(12px, 2vw, 20px);
+  font-size: 16px;
+  padding: 15px;
+  border-radius: 8px;
   border: 1px solid #888;
-  border-radius: 6px;
-  cursor: pointer;
   background-color: var(--custom-button-bg-color);
   color: var(--custom-grid-text-color);
-  transition: 0.2s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  transform: scale(1);
+  will-change: transform, background-color;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0;
+  aspect-ratio: 1 / 1;
 }
 
 body.light-mode #grid button {
@@ -228,8 +304,14 @@ body.light-mode #grid button {
 }
 
 #grid button:hover {
-  background-color:  var(--custom-button-hover-color); 
-  transform: scale(1.03);
+  background-color: var(--custom-button-hover-color);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#grid button:active {
+  transform: scale(0.95);
+  transition: transform 0.1s ease;
 }
 
 body.light-mode #grid button:hover {
@@ -239,13 +321,20 @@ body.light-mode #grid button:hover {
 .correct {
   background-color: var(--custom-correct-bg-color) !important;
   color: var(--custom-correct-text-color) !important;
-  pointer-events: none;
-  text-decoration: line-through;
+  transform: scale(1.1) !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3) !important;
+  animation: correctPulse 0.3s ease-out;
 }
 
 body.light-mode .correct {
   background-color: rgb(112, 112, 112) !important;
   color: white !important;
+}
+
+@keyframes correctPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1.1); }
 }
 
 #restart-btn {
@@ -308,6 +397,65 @@ body.light-mode .color-option-group label {
     padding: 0;
     cursor: pointer;
     background: none;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #6e4d73;
+}
+
+.leaderboard-wrapper.collapsed .sidebar-header {
+    flex-direction: column;
+    align-items: center;
+    border-bottom: none;
+    margin-bottom: 10px;
+}
+
+.toggle-sidebar-btn {
+    background: none;
+    border: none;
+    color: #6e4d73;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    min-width: 30px;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    position: relative;
+}
+
+.toggle-sidebar-btn:hover {
+    background-color: rgba(110, 77, 115, 0.2);
+}
+
+.toggle-sidebar-btn:active {
+    background-color: rgba(110, 77, 115, 0.4);
+}
+
+.leaderboard-wrapper.collapsed h2 {
+    display: none;
+}
+
+.leaderboard-wrapper.collapsed #score-list {
+    display: none;
+}
+
+.leaderboard-wrapper.collapsed .color-options {
+    display: none;
+}
+
+.leaderboard-wrapper.collapsed .footer-credit {
+    display: none;
 }
 
 @media (max-width: 767px) {
