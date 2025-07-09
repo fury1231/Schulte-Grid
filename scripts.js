@@ -256,16 +256,22 @@ function handleClick(btn, num) {
 	const expected = getCurrentTarget();
 	if (num === expected) {
 		finishedNumbers.push(num);
-		numbers = numbers.filter(n => n !== num);
 		currentIndex++;
 		btn.classList.add("correct");
-		if (isHellMode && numbers.length > 0) {
-			clearTimeout(shuffleTimeout);
-			shuffleGrid();
-			startShuffleTimer();
-		} else {
-			renderGrid();
+		
+		// 只有地獄模式才從numbers中移除並重新排列
+		if (isHellMode) {
+			numbers = numbers.filter(n => n !== num);
+			if (numbers.length > 0) {
+				clearTimeout(shuffleTimeout);
+				shuffleGrid();
+				startShuffleTimer();
+			} else {
+				renderGrid();
+			}
 		}
+		// 一般模式不需要重新渲染，保持原本位置
+		
 		if (finishedNumbers.length === maxNumber) {
 			clearInterval(interval);
 			clearTimeout(shuffleTimeout);
